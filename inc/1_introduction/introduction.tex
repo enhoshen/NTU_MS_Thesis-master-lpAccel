@@ -1,0 +1,31 @@
+\chapter{Introduction}
+\label{ch:intro}
+
+Deep neural networks (DNNs) have shown promising capability in numbers of AI applications, including computer vision, natural language processing and even gaming. The performance of DNN is improving rapidly: the ImageNet classification challenge has surpassed human-level top-5 accuracy 95.51\% (ResNet-152)\cite{ResNet} and even beyond.
+
+However, such performance requires tens to hundreds of parameters, up to billions of operations for a single image inference. For example, AlexNet \cite{AlexNet} takes 1.4GOPS to process a single 224x224 image, while ResNet-152 takes
+22.6GOPS, more than an order of magnitude more computation. In order to run these model in real time, modern powerful general-purpose GPUs are mandatory, indicating deployment of said models on embedded devices, where the true potential of artificial intelligence lies, impractical. 
+
+Besides processing speed, the enormous amount of operations and memory transactions introduce unbearable energy consumption for mobile devices. The energy cost per 32b operation in a 45nm
+technology ranges from 3pJ for multiplication to 640pJ for off-chip memory access \cite{EIE}. To run a billion
+connection neural network at 30 FPS would require 30Hz × 1G × 640pJ = 19.2W just
+for DRAM accesses, well beyond the several hundreds mini Watt to couple of Watt range of typical mobile battery-powered devices.
+
+To address the problem, we propose a re-configurable accelerator hardware, to efficiently run linearly-quantized CNN model, saving both computational and memory transaction power from the micro-architectural, system-level dataflow, algorithmic quantization strategy perspectives.
+\section{Motivation}
+Researchers have dedicated to either optimized model or dedicated hardware for DNN. For algorithmic optimizations,some would compress pre-trained deep networks taking advantage of the sparse property of DNN, even further encode the final model \cite{Deep Compression},\cite{Eyeriss}; Some trim their model through pruning, discarding unwanted or insignificant weights. \cite{Deep Compression},\cite{ThiNet},; there are researches that directly re-design the networks, seen in \cite{MobileNet},\cite{ShuffleNet}, often replace the original computational dense regular convolution layer with group convolution or depth-wise convolution, also they insert 1x1 filter between normal 3x3 filters, drastically reduces the input channel size to following convolution layer with an additional layer of non-linearity. These approaches introduce certain degrees of irregularity to the computation. For compression, encoded weights will ultimately be decompressed to be used in computation, as seen in \cite{EIE}, \cite{Eyeriss}, putting extra burden on the processors, but often cut down on the data transaction cost. For specially designed mobile friendly models, they are often memory-bound, requiring large bandwidth on off-chip memory, which would not be easily optimized without system-level design, out of the main context of hardware accelerator design of this thesis.
+
+With the main focus of low-power and above concerns in mind, we find that linear quantisation of deep models on both weights and activations is a rather regular compression strategy, reducing memory traffic without complex indexing and decompression on the accelerator side. However, common processions are usually only equipped with 8/16 bit and floating point adder and multiplier, deploying low-precision model onto normal processor will be a waste in micro-architectural perspective.
+Besides, ultra low-precision (under 8 bit) has been shown to pose great drop on accuracy applied to the each layers of a model on large-scale dataset like ImageNet. Workarounds have been seen in many works, including leave the most information-rich layers, which are the first convolution layer and the last fully-connected layer, untouched \cite{XnorNet}. It is also shown \cite{XnorNet},\cite{FixedPoint} that different layers of a deep model response differently to quantisation: more bit for all resulting waste of resources, less bit for all ended up model accuracy loss.
+
+Therefore, a flexible accelerator for low-bit arthmetic is mandatory. First, we propose a simple trick on training low-precision deep network, exploiting the potential of flexible bit-width quantization on AlexNet, ImageNet dataset. Seeing the approach working, we then design a dataflow architecturally for low-bit arithmetic operations, and we also have to design a re-configurable arthmetic-logic unit capable of computing 1,2,4,8 bit addition and multiplication. 
+\section{Thesis Outline}
+In this chapter, we briefly go through some of the works striving for neural network simplification, and bring out the mindset that drives us to work on model quantisation and re-configurable accelerator design. The related works are mentioned in Chapter 2. Knowledge regarding convolution neural network and quantisation is in Chapter 3, a quantisation method is also proposed. Moving on to the hardware design, we'll discuss about the proposed architecture and its performance, specification in Chapter 4. At last, conclusion is given in Chapter 5.  
+\section{Contribution}
+
+
+
+\begin{itemize}
+    \item \textcolor{purple}{What's your research question?}
+    \item \textcolor{purple}{What's your motivation for that research question, i.e. why would you investigate quantised CNN hardware?}
+\end{itemize}
