@@ -1,3 +1,6 @@
 \chapter{Conclusion}
 \label{ch:conclusion}
+An architecture capable of performing 1,2,4,8-bit multiplication and add operation on CNN is presented. We set out with the feasibility of linear quantization scheme on CNN, the power consumption bottleneck for deploying CNN on mobile devices, to developing a promising training scheme for linear quantization threshold choosing and achieve $54\%$ accuracy on a 4-bit AlexNet model on ImagenNet dataset, and finally design and implement a precision re-configurable hardware accelerator dedicated to low arithmetic precision CNN networks. The implementation uses 180KB on-chip memory and 1340K logic gates, comparable to existing designs. We synthesized and evaluated the system down to gate-level. The design uses a dataflow suitable for convolution layers with high data reuse rate, couple with a subword accumulation style operation so that the data shape fits onto the on-chip memory properly. We believe this work can benefit low-power mobile deep neural network deployment in practical use.
+\iffalse
 \textcolor{purple}{Summarise (one or two sentences each) where you set out and what path you went. From that, you should proceed to making clear what kind of advances your results enable. These can be both on the technical (chip design) or on the application level.}
+\fi

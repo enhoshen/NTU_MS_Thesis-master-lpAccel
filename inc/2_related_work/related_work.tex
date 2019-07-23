@@ -10,10 +10,10 @@ Quantization maps data to a smaller set of quantization levels. The principle is
     \label{fig:quant_types}
 \end{figure}
 \subsection{fixed point quantisation}
-More related to this work, researches find the numerical requirement for even the latest DNN model inference stage far from the commonly used 32/64 bit floating-point format. \cite{FixedPoint} quantize the models to fixed point with ${L_2}$ error minimization, achieved \textbf{0.89\%} MCR (miss classification rate) on \textbf{MNIST} with 5 bits weights in comparison to \textbf{0.81\%} MCR with floating point weights.
+More related to this work, researches find the numerical requirement for even the latest DNN model inference stage far from the commonly used 32/64 bit floating-point format. \cite{FixedPoint} quantize the models to fixed point with ${L_2}$ error minimization, achieved \textbf{0.89\%} MCR (miss classification rate) on \textbf{MNIST}\cite{mnist} with 5 bits weights in comparison to \textbf{0.81\%} MCR with floating point weights.
 \subsection{ternary to binary quantisation}
 Some researchers have tried extreme quantization down to 2bits ternary weights such as in TWNs\cite{Ternary} and even binary weights in BinaryNet \cite{BinaryNet}, to binarize both weight and activation as in XNOR-net\cite{XnorNet}. \\
-TWNs minimizes the Euclidian distance between the full precision weights $\boldsymbol{W}$ and ternary-valued weights $\boldsymbol{W^t}$ along with a non-negative scaling factor $\alpha$ in \eqref{eq:twn} achieving \textbf{99.35\%}, \textbf{92.56\%}, \textbf{84.2\%} on \textbf{MNIST}, \textbf{CIFAR-10}, \textbf{ImageNet(top-5)} dataset respectively.  
+TWNs minimizes the Euclidian distance between the full precision weights $\boldsymbol{W}$ and ternary-valued weights $\boldsymbol{W^t}$ along with a non-negative scaling factor $\alpha$ in \eqref{eq:twn} achieving \textbf{99.35\%}, \textbf{92.56\%}, \textbf{84.2\%} on \textbf{MNIST}, \textbf{CIFAR-10}\cite{cifar10}, \textbf{ImageNet(top-5)} dataset respectively.  
 \begin{equation}
 \begin{aligned}\label{eq:twn}
     \alpha^*, \boldsymbol{W^{t*}} = \mathop{\arg\min}_{\alpha,\boldsymbol{W^t}} = \|\boldsymbol{W}-\alpha\boldsymbol{W^t}\|^2_2 \\  
