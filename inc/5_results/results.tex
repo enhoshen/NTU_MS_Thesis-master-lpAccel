@@ -147,7 +147,7 @@ We synthesize and evaluate our design using TSMC 90nm technology. The PE array a
 
 
 \subsection{Experiments} 
-We lists the configuration and setting used on various models, and the performance reports. All the experiments set the batch size $B$ to 4, processes at 200MHz, 1V. Our hardware utilization rate is easily determined, which is usually $T_h$, the active PE column counts as well as the output rows processed in a PE row. If $T_h$ is larger than the PE column number 16, we allocate as much resource, as in PE columns as possible, and gated idle PE columns at the last height tile. For the most part, our hardware utilization rate on ImageNet, where the input spatial size is of 224x224, is usually $13/16(81.25\%)$. The utilization rate can be easily scaled up if we fit the design to a particular dataset spatial dimension, however we choose the PE shape for general purpose, and multiple of 16 is usually suitable for hardware designs. From various experiments we can see the power of quantization as low as to 4-bit, it boost the processing time and reduce off-chip memory access even without coding or compression at the edge of the system. More importantly, the design is highly flexible and fit for various bit-length and model shapes. \\
+We lists the configuration and setting used on various models, and the performance reports. All the experiments set the batch size $B$ to 4, processes at 200MHz, 1V. Note the $psum word$ parameter is the partial sum word length storage on-chip, a word is of 16-bit, we use 2 word 32-bit for partial sum when overflow takes place frequently. Our hardware utilization rate is easily determined, which is usually $T_h$, the active PE column counts as well as the output rows processed in a PE row. If $T_h$ is larger than the PE column number 16, we allocate as much resource, as in PE columns as possible, and gated idle PE columns at the last height tile. For the most part, our hardware utilization rate on ImageNet, where the input spatial size is of 224x224, is usually $13/16(81.25\%)$. The utilization rate can be easily scaled up if we fit the design to a particular dataset spatial dimension, however we choose the PE shape for general purpose, and multiple of 16 is usually suitable for hardware designs. From various experiments we can see the power of quantization as low as to 4-bit, it boosts the processing time and reduce off-chip memory access even without coding or compression at the edge of the system. More importantly, the design is highly flexible and fit for various bit-length and model shapes. \\
 
 \begin{table}[h]
     \caption{AlexNet configurations}
@@ -159,7 +159,7 @@ We lists the configuration and setting used on various models, and the performan
                       & $T_w$ & $T_h$ & $H'$ & $W'$ & $P_{ch}$ & $X_b$ & $W_b$ & $A_b$ & $O_b$ & $P_m$ & $R$  & $S$  & $T_m$ & $T_b$ & $C$   & $E$  & $F$  & $M$   & psum word \\
                       \toprule
         alex conv1     & 14 & 14 & 63 & 63 & 1   & 2  & 1  & 4  & 4  & 2  & 11 & 11 & 64 & 2  & 3   & 55 & 55 & 64  & 2         \\
-        alex conv2     & 27 & 27 & 31 & 31 & 4   & 1  & 1  & 4  & 4  & 2  & 5  & 5  & 64 & 1  & 64  & 27 & 27 & 256 & 1         \\
+        alex conv2     & 27 & 27 & 31 & 31 & 2   & 1  & 1  & 4  & 4  & 2  & 5  & 5  & 64 & 1  & 64  & 27 & 27 & 256 & 1         \\
         alex conv3,4,5     & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 4  & 4  & 4  & 3  & 3  & 64 & 4  & 256 & 13 & 13 & 256 & 1         \\
         old alex conv3 & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 4  & 4  & 4  & 3  & 3  & 64 & 4  & 256 & 13 & 13 & 384 & 1         \\
         old alex conv4 & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 4  & 4  & 4  & 3  & 3  & 64 & 4  & 192 & 13 & 13 & 384 & 1         \\
@@ -178,7 +178,7 @@ We lists the configuration and setting used on various models, and the performan
         \begin{tabular}{l|llllllllllllllllllllll}
                 & $T_w$ & $T_h$ & $H'$ & $W'$ & $P_{ch}$ & $X_b$ & $W_b$ & $A_b$ & $O_b$ & $P_m$ & $R$  & $S$  & $T_m$ & $T_b$ & $C$   & $E$  & $F$  & $M$   & psum word \\
         \toprule
-            vgg1   & 16 & 16 & 18 & 18 & 4   & 2  & 1  & 4  & 4  & 4  & 3 & 3 & 64 & 2  & 3   & 224 & 224 & 64  & 2         \\
+            vgg1   & 16 & 16 & 18 & 18 & 4   & 2  & 1  & 4  & 4  & 2  & 3 & 3 & 64 & 2  & 3   & 224 & 224 & 64  & 2         \\
             vgg1-2 & 16 & 16 & 18 & 18 & 4   & 1  & 1  & 4  & 4  & 4  & 3 & 3 & 64 & 4  & 64  & 224 & 224 & 64  & 1         \\
             vgg2-1 & 16 & 16 & 18 & 18 & 4   & 1  & 1  & 4  & 4  & 4  & 3 & 3 & 64 & 4  & 64  & 224 & 224 & 128 & 1         \\
             vgg2-2 & 16 & 16 & 18 & 18 & 4   & 1  & 1  & 4  & 4  & 4  & 3 & 3 & 64 & 4  & 128 & 112 & 112 & 128 & 1         \\
@@ -204,10 +204,30 @@ We lists the configuration and setting used on various models, and the performan
                       & $T_w$ & $T_h$ & $H'$ & $W'$ & $P_{ch}$ & $X_b$ & $W_b$ & $A_b$ & $O_b$ & $P_m$ & $R$  & $S$  & $T_m$ & $T_b$ & $C$   & $E$  & $F$  & $M$   & psum word \\
                       \toprule
             alexnor conv1     & 14 & 14 & 63 & 63 & 1   & 1  & 1  & 8  & 1  & 2  & 11 & 11 & 64 & 2  & 3   & 55 & 55 & 64  & 2         \\
-            alexnor conv2     & 27 & 27 & 31 & 31 & 4   & 1  & 1  & 1  & 1  & 2  & 5  & 5  & 64 & 1  & 64  & 27 & 27 & 256 & 1         \\
+            alexnor conv2     & 27 & 27 & 31 & 31 & 2   & 1  & 1  & 1  & 1  & 2  & 5  & 5  & 64 & 1  & 64  & 27 & 27 & 256 & 1         \\
             alexnor conv3 & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 1  & 1  & 4  & 3  & 3  & 96 & 4  & 256 & 13 & 13 & 384 & 1         \\
             alexnor conv4 & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 1  & 1  & 4  & 3  & 3  & 96 & 4  & 192 & 13 & 13 & 384 & 1         \\
             alexnor conv5 & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 1  & 1  & 4  & 3  & 3  & 96 & 4  & 192 & 13 & 13 & 256 & 1       \\
+
+        \bottomrule
+        \end{tabular}
+    }
+\end{table}
+
+\begin{table}[h]
+    \caption{TensorRT 8-bit AlexNet configurations}
+    \label{tab:alex8b_conf}
+    \centering
+    \footnotesize 
+    \resizebox{\linewidth}{!}{%
+        \begin{tabular}{l|lllllllllllllllllll}
+                      & $T_w$ & $T_h$ & $H'$ & $W'$ & $P_{ch}$ & $X_b$ & $W_b$ & $A_b$ & $O_b$ & $P_m$ & $R$  & $S$  & $T_m$ & $T_b$ & $C$   & $E$  & $F$  & $M$   & psum word \\
+                      \toprule
+            alex 8b conv1     & 14 & 14 & 63 & 63 & 1   & 1  & 1  & 8  & 8  & 2  & 11 & 11 & 64 & 2  & 3   & 55 & 55 & 64  & 2         \\
+            alex 8b conv2     & 27 & 14 & 31 & 31 & 2   & 1  & 1  & 8  & 8  & 1  & 5  & 5  & 64 & 1  & 64  & 27 & 27 & 256 & 2         \\
+            alex 8b conv3     & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 8  & 8  & 2  & 3  & 3  & 64 & 4  & 256 & 13 & 13 & 384 & 2         \\
+            alex 8b conv4     & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 8  & 8  & 2  & 3  & 3  & 64 & 4  & 192 & 13 & 13 & 384 & 2         \\
+            alex 8b conv5     & 13 & 13 & 15 & 15 & 4   & 1  & 1  & 8  & 8  & 2  & 3  & 3  & 64 & 4  & 192 & 13 & 13 & 256 & 2       \\
 
         \bottomrule
         \end{tabular}
@@ -224,7 +244,7 @@ We lists the configuration and setting used on various models, and the performan
                       & ibuf size (B) & wbuf size (B) & psum pad (2B) & gb size (B) & off-chip access (MB) & prcessing time (ms) \\
         \toprule
         alex conv1     & 1008          & 484           & 56                & 97416       & 1.82                 & 4.34                \\
-        alex conv2     & 496           & 400           & 54                & 67144       & 1.61                 & 6.91                \\
+        alex conv2     & 248           & 200           & 54                & 56900       & 1.61                 & 6.91                \\
         alex conv3,4,5     & 120           & 288           & 52                & 55072       & 0.80                 & 2.40                \\
         old alex conv5 & 120           & 288           & 52                & 55072       & 0.62                 & 1.80                \\
         old alex conv4 & 120           & 288           & 52                & 55072       & 0.93                 & 2.70                \\
@@ -245,7 +265,7 @@ We lists the configuration and setting used on various models, and the performan
         \begin{tabular}{l|llllll}
                & ibuf size (B) & wbuf size (B) & psum pad (2B) & gb size (B) & off-chip access (MB) & prcessing time (ms) \\
         \toprule
-        vgg1   & 288           & 288           & 128               & 80512       & 11.72                & 18.06               \\
+        vgg1   & 288           & 288           & 64               & 80512       & 11.72                & 18.06               \\
         vgg1-2 & 144           & 288           & 64                & 80512       & 17.32                & 36.13               \\
         vgg2-1 & 144           & 288           & 64                & 80512       & 25.46                & 72.25               \\
         vgg2-2 & 144           & 288           & 64                & 80512       & 14.26                & 36.13               \\
@@ -276,7 +296,7 @@ We lists the configuration and setting used on various models, and the performan
                       & ibuf size (B) & wbuf size (B) & psum pad (2B) & gb size (B) & off-chip access (MB) & prcessing time (ms) \\
         \toprule
         alexnor conv1 & 504           & 484           & 56                & 81540       & 2.01                 & 4.34                \\
-        alexnor conv2 & 496           & 400           & 54                & 67144       & 0.40                 & 1.73                \\
+        alexnor conv2 & 248           & 200           & 54                & 56900       & 0.40                 & 1.73                \\
         alexnor conv3 & 120           & 288           & 52                & 79008       & 0.25                 & 0.90                \\
         alexnor conv4 & 120           & 288           & 52                & 79008       & 0.19                 & 0.67                \\
         alexnor conv5 & 120           & 288           & 52                & 79008       & 0.14                 & 0.51                \\
@@ -298,12 +318,12 @@ We lists the configuration and setting used on various models, and the performan
                       & ibuf size (B) & wbuf size (B) & psum pad size (B) & gb size (B) & off-chip access (MB) & prcessing time (ms) \\
         \toprule
         alexnet 8b conv1 & 504           & 484           & 56                & 81540       & 2.68                 & 4.34                \\
-        alexnet 8b conv2 & 496           & 400           & 54                & 67144       & 3.21                 & 13.82               \\
-        alexnet 8b conv3 & 120           & 288           & 52                & 79008       & 1.97                 & 7.19                \\
-        alexnet 8b conv4 & 120           & 288           & 52                & 79008       & 1.54                 & 5.39                \\
-        alexnet 8b conv5 & 120           & 288           & 52                & 79008       & 1.15                 & 4.04                \\
+        alexnet 8b conv2 & 248           & 100           & 54                & 58628      & 5.74                 & 13.82               \\
+        alexnet 8b conv3 & 120           & 288           & 52                & 98336       & 2.41                 & 7.19                \\
+        alexnet 8b conv4 & 120           & 288           & 52                & 98336       & 1.87                 & 5.39                \\
+        alexnet 8b conv5 & 120           & 288           & 52                & 98336       & 1.25                 & 3.59                \\
         \midrule
-                total      &               &               &                   &             & 10.56                & 34.78   \\
+                total      &               &               &                   &             & 13.95               & 34.33   \\
         \bottomrule
         \end{tabular}
     }
@@ -321,12 +341,12 @@ We lists the configuration and setting used on various models, and the performan
         AlexNet       & 206.9  & 0.019 & 5.84   & 573   &  54               \\
         Vgg16         & 6.86   & 0.58  & 210.01 & 664   & N/A              \\
         Alex XNOR     & 491.2  & 0.008 & 2.99   & 581   & 44 \\
-        TensorRT Alex 8-bit    & 115    & 0.035 & 10.56  & 573   & 57   \\
+        TensorRT Alex 8-bit    & 116.5    & 0.034 & 11.42  & 580   & 57   \\
         \bottomrule
         \end{tabular}
     }
 \end{table}
-\autoref{fig:bit_conf} studies the re-configurablility benefits and trade-offs on various bit-length setting. Most interesting part is the mixed precision flexibility of this work, as long as the training results permits, the potential presents. The figure compares the off-chip memory access and processing cycle counts on our AlexNet conv5 setting. As the data bit-length vary, the optimal arithmetic mode can be chosen based on the charts. Possibilities exist where the cost is close for two arithmetic configuration, the better choice lies in the trade-off between saving off-chip DRAM power consumption which is often 3-orders higher than a basic operation and saving processing cycle on a averagely 600mW system.
+\autoref{fig:bit_conf} studies the re-configurablility benefits and trade-offs on various bit-length setting. Most interesting part is the mixed precision flexibility of this work, as long as the training results permits, the potential presents. The figure compares the off-chip memory access and processing cycle counts on our AlexNet conv5 setting. As the data bit-length varies, the optimal arithmetic mode can be chosen based on the charts. Possibilities exist where the cost is close for two arithmetic configuration, the better choice lies in the trade-off between saving off-chip DRAM power consumption which is often 3-orders higher than a basic operation and saving processing cycle on a averagely 600mW system.
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{inc/5_results/figure/bit_conf.png}
