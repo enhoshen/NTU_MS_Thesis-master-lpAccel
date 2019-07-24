@@ -145,11 +145,27 @@ We synthesize and evaluate our design using TSMC 90nm technology. The PE array a
 
 
 
-
+\begin{table}[h!]
+    \caption{Performance summary Batch=4}
+    \label{tab:perf_sum}
+    \centering
+    \footnotesize 
+    \resizebox{\linewidth}{!}{%
+        \begin{tabular}{c|ccccc}
+                      & FPS & processing time (s)& off-chip access(MB) & average power (mW) & Accuracy(\%)   \\
+        \toprule
+        AlexNet       & 206.9  & 0.019 & 5.84   & 573   &  54               \\
+        Vgg16         & 6.86   & 0.58  & 210.01 & 664   & N/A              \\
+        Alex XNOR     & 491.2  & 0.008 & 2.99   & 581   & 44 \\
+        TensorRT Alex 8-bit    & 116.5    & 0.034 & 13.95  & 580   & 57   \\
+        \bottomrule
+        \end{tabular}
+    }
+\end{table}
 \subsection{Experiments} 
 We lists the configuration and setting used on various models, and the performance reports. All the experiments set the batch size $B$ to 4, processes at 200MHz, 1V. Note the $psum word$ parameter is the partial sum word length storage on-chip, a word is of 16-bit, we use 2 word 32-bit for partial sum when overflow takes place frequently. Our hardware utilization rate is easily determined, which is usually $T_h$, the active PE column counts as well as the output rows processed in a PE row. If $T_h$ is larger than the PE column number 16, we allocate as much resource, as in PE columns as possible, and gated idle PE columns at the last height tile. For the most part, our hardware utilization rate on ImageNet, where the input spatial size is of 224x224, is usually $13/16(81.25\%)$. The utilization rate can be easily scaled up if we fit the design to a particular dataset spatial dimension, however we choose the PE shape for general purpose, and multiple of 16 is usually suitable for hardware designs. From various experiments we can see the power of quantization as low as to 4-bit, it boosts the processing time and reduce off-chip memory access even without coding or compression at the edge of the system. More importantly, the design is highly flexible and fit for various bit-length and model shapes. \\
 
-\begin{table}[h]
+\begin{table}[h!]
     \caption{AlexNet configurations}
     \label{tab:alex_conf}
     \centering
@@ -169,7 +185,7 @@ We lists the configuration and setting used on various models, and the performan
         \end{tabular}
     }
 \end{table}
-\begin{table}[h]
+\begin{table}[h!]
     \caption{Vgg-16 configurations}
     \label{tab:vgg_conf}
     \centering
@@ -194,7 +210,7 @@ We lists the configuration and setting used on various models, and the performan
     }
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \caption{XNOR AlexNet configurations}
     \label{tab:alex_conf}
     \centering
@@ -214,7 +230,7 @@ We lists the configuration and setting used on various models, and the performan
     }
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \caption{TensorRT 8-bit AlexNet configurations}
     \label{tab:alex8b_conf}
     \centering
@@ -234,7 +250,7 @@ We lists the configuration and setting used on various models, and the performan
     }
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \caption{AlexNet results}
     \label{tab:alex_result}
     \centering
@@ -256,7 +272,7 @@ We lists the configuration and setting used on various models, and the performan
         \end{tabular}
     }
 \end{table}
-\begin{table}[h]
+\begin{table}[h!]
     \caption{Vgg results}
     \label{tab:vgg_result}
     \centering
@@ -286,7 +302,7 @@ We lists the configuration and setting used on various models, and the performan
     }
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \caption{Xnor AlexNet results}
     \label{tab:xnor_result}
     \centering
@@ -308,7 +324,7 @@ We lists the configuration and setting used on various models, and the performan
     }
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
     \caption{TensorRT AlexNet results}
     \label{tab:xnor_result}
     \centering
@@ -329,29 +345,14 @@ We lists the configuration and setting used on various models, and the performan
     }
 \end{table}
 
-\begin{table}[h]
-    \caption{Performance summary Batch=4}
-    \label{tab:perf_sum}
-    \centering
-    \footnotesize 
-    \resizebox{\linewidth}{!}{%
-        \begin{tabular}{c|ccccc}
-                      & FPS & processing time (s)& off-chip access(MB) & average power (mW) & Accuracy(\%)   \\
-        \toprule
-        AlexNet       & 206.9  & 0.019 & 5.84   & 573   &  54               \\
-        Vgg16         & 6.86   & 0.58  & 210.01 & 664   & N/A              \\
-        Alex XNOR     & 491.2  & 0.008 & 2.99   & 581   & 44 \\
-        TensorRT Alex 8-bit    & 116.5    & 0.034 & 13.95  & 580   & 57   \\
-        \bottomrule
-        \end{tabular}
-    }
-\end{table}
+
+
 \autoref{fig:bit_conf} studies the re-configurablility benefits and trade-offs on various bit-length setting. Most interesting part is the mixed precision flexibility of this work, as long as the training results permits, the potential presents. The figure compares the off-chip memory access and processing cycle counts on our AlexNet conv5 setting. As the data bit-length varies, the optimal arithmetic mode can be chosen based on the charts. Possibilities exist where the cost is close for two arithmetic configuration, the better choice lies in the trade-off between saving off-chip DRAM power consumption which is often 3-orders higher than a basic operation and saving processing cycle on a averagely 600mW system.
-\begin{figure}[h!]
+
+\begin{figure}[hbt!]
     \centering
     \includegraphics[width=1\linewidth]{inc/5_results/figure/bit_conf.png}
     \caption{Various data bit-length to arithmetic bit-length off-chip access and processing time scaling.}
     \label{fig:bit_conf}
 \end{figure}
-
 
