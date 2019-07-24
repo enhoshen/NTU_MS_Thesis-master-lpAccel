@@ -17,7 +17,7 @@ Power consumption is usually the bigger concern before performance when it comes
 \subsection{Dataflow}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\linewidth]{inc/4_proposed_architecture/figure/dataflow.png}
+    \includegraphics[width=1\linewidth]{inc/4_proposed_architecture/figure/dataflow.png}
     \caption{An overview of the proposed dataflow.}
     \label{fig:dataflow}
 \end{figure}
@@ -57,7 +57,7 @@ Data tiling is widely used in the computation of large matrix-matrix multiplicat
 \end{table}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\linewidth]{inc/4_proposed_architecture/figure/stride_buffer.png}
+    \includegraphics[width=1\linewidth]{inc/4_proposed_architecture/figure/stride_buffer.png}
     \caption{Input and Weight buffer data arrangement and their relation with stride $U$.}
     \label{fig:stride_buffer}
 \end{figure}
@@ -135,7 +135,7 @@ The data is specially arranged in the following manners \autoref{tab:addr_map} i
     \caption{PE column pipeline.}
     \label{fig:pe}
 \end{figure}
-PE consist of a 3-stage processing pipeline, three register-files holding input, weight and partial sum, and a partial sum propagate pipeline. The first stage is the \textit{Fetch stage}, its serves solely as a delay unit for register file data read. The second stage is the main contribution of this work, the \textit{Multiplication stage} consisting of multiplier-adder trees that multiplies and add two 16-bit data subword-ly. The third stage \textit{summation stage} is made of a 32-18 bit signed adder and a shifter. The adder can be configured to be a 16-16 bit signed adder for 16-bit partial sum. The shifter left shift the data $A_b*(wbb+xbb)$ bits, matching the data weighting according to the current bit-channels. The summation operation saturates any overflow or underflow data. The partial sum stays in the partial sum register in this stage for $P_ch*R$ cycles, and then written to \textit{PPAD}, the partial sum register file. \\
+PE consist of a 3-stage processing pipeline, three register-files holding input, weight and partial sum, and a partial sum propagate pipeline. The first stage is the \textit{Fetch stage}, its serves solely as a delay unit for register file data read. The second stage is the main contribution of this work, the \textit{Multiplication stage} consisting of multiplier-adder trees that multiplies and add two 16-bit data subword-ly. The third stage \textit{summation stage} is made of a 32-18 bit signed adder and a shifter. The adder can be configured to be a 16-16 bit signed adder for 16-bit partial sum. The shifter left shift the data $A_b*(wbb+xbb)$ bits, matching the data weighting according to the current bit-channels. The summation operation saturates any overflow or underflow data. The partial sum stays in the partial sum register in this stage for $P_{ch}*R$ cycles, and then written to \textit{PPAD}, the partial sum register file. \\
 The final stage \textit{output propagate path stage} works as a FIFO, it takes partial sum from neighbor PE on its left or read from the PPAD, and passes the partial sum down the propagate path to its neighbor PE on the right. The stage chooses its partial sum source in a round-robin manner, if both partial sums from left PE and PPAD are available, it takes the source other than the last source processed. The propagate path throughput is 16x32bit, it has to sends out $\textit{Active PE row}*P_m*T_w$ number of data before the new partial sum row being processed overlaps the PPAD address without any latency. The overlapping condition is $16*P_m*T_w \geq R*P_{ch}*2*T_w*P_m$ , which means that the PE can't generates two rows of partial sum with the cycles it takes to transfer 16 rows of partial sum out of the PE array without stalling the PE processing, 16 is the worst case where every PE columns are active. In practice, even the unwanted latency presents, it doesn't deter the entire processing much as a partial sum are sent out every $R*S*P_{ch}*T_w*P_m*X_b$ cycles, the latency would always be negligible. As we can see the condition is always met for fixed PE array dimension, it limits the scalability of the architecture, the column number can't be too big for global buffer bandwidth to bear. \\
 Now to the data \textit{scratch pad}. Every PE is equipped with one of each input, weight and partial sum scratch pad. The scratch pads are register files that hold data for the purpose of convolutional data reuse. The scratch pad specifications and constraints are given by \autoref{tab:pad_spec} and \autoref{tab:pad_cons}. The input and weight pad hold a window of current 1D convolution window, the partial sum pad instead holds $P_m$ rows of partial sum. Note that the partial sum PAD is a 32x32b register file, capable of handling both 16-bit and 32-bit partial sum data. Practically configuration larger than 8-bit and 4-bit input and weight requires 32-bit partial sum to prevent constant overflow or underflow, yet a 4-bit to 4-bit setting, which consists most portion of our best \textbf{AlexNet} model, 16-bit partial sum is enough. With knowledge of scratch pads, we provide an example in \autoref{fig:tww} and \autoref{fig:xb_to_s} demonstrating the data storage in pads and 1D convolution dataflow in terms of looping indexes. \\
 \begin{figure}

@@ -32,7 +32,7 @@ Our quantization error minimization training on AlexNet achieves $54\%$ accuracy
         \end{tabular}
 \end{table}
 \section{Implementation results}
-We synthesize and evaluate our design using TSMC 90nm technology. The PE array and Buffer specification is provided in \autoref{tab:spec}, the best synthesized cell area is 15698896 cell area, approximately 15.6 $mm^2$. We co-simulate the design using \textbf{Nicotb}\cite{nicotb} and Cadence nc-verilog version 15.20-s039; we synthesize the design with Synopsys design compiler version 0-2018.06 and finally simulate power consumption with Synopsys PrimeTime version M-2017.06-SP2. \autoref{tab:comp} lists several highly related hardware implementation works in comparison, note that Vgg16 benchmark setting is not yet trained on 4-bit arithmetic setting, yet we are highly confident that there is room for quantization for such redundant network; also, comparing a Gate-level simulated design to taped-out \\
+We synthesize and evaluate our design using TSMC 90nm technology. The PE array and Buffer specification is provided in \autoref{tab:spec}, the best synthesized cell area is 15698896 cell area, approximately 15.6 $mm^2$. We co-simulate the design using \textbf{Nicotb}\cite{nicotb} and Cadence nc-verilog version 15.20-s039; we synthesize the design with Synopsys design compiler version 0-2018.06 and finally simulate power consumption with Synopsys PrimeTime version M-2017.06-SP2. \autoref{tab:comp} lists several highly related hardware implementation works in comparison, note that Vgg16 benchmark setting is not yet trained on 4-bit arithmetic setting, yet we are highly confident that there is room for quantization for such redundant network. \\
 \begin{table}[h]
     \caption{System specification}
     \label{tab:spec}
@@ -110,7 +110,7 @@ We synthesize and evaluate our design using TSMC 90nm technology. The PE array a
 \autoref{fig:buffer_hier} shows the buffer hierarchy significance, removing input and weight buffer introduces a $1.14$x power consumption overhead on representative AlexNet conv5 layer. The additional buffer takes up about $20\%$ more area as a trade-off. 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.4\linewidth]{inc/5_results/figure/buffer_hier.png}
+    \includegraphics[width=0.6\linewidth]{inc/5_results/figure/buffer_hier.png}
     \caption{Buffer hierarchy area power trade-off.}
     \label{fig:buffer_hier}
 \end{figure}
@@ -124,7 +124,7 @@ We synthesize and evaluate our design using TSMC 90nm technology. The PE array a
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.4\linewidth]{inc/5_results/figure/operation_power.png}
+    \includegraphics[width=0.6\linewidth]{inc/5_results/figure/operation_power.png}
     \caption{Arithmetic unit configuration power.}
     \label{fig:operation_power}
 \end{figure}
@@ -341,13 +341,13 @@ We lists the configuration and setting used on various models, and the performan
         AlexNet       & 206.9  & 0.019 & 5.84   & 573   &  54               \\
         Vgg16         & 6.86   & 0.58  & 210.01 & 664   & N/A              \\
         Alex XNOR     & 491.2  & 0.008 & 2.99   & 581   & 44 \\
-        TensorRT Alex 8-bit    & 116.5    & 0.034 & 11.42  & 580   & 57   \\
+        TensorRT Alex 8-bit    & 116.5    & 0.034 & 13.95  & 580   & 57   \\
         \bottomrule
         \end{tabular}
     }
 \end{table}
 \autoref{fig:bit_conf} studies the re-configurablility benefits and trade-offs on various bit-length setting. Most interesting part is the mixed precision flexibility of this work, as long as the training results permits, the potential presents. The figure compares the off-chip memory access and processing cycle counts on our AlexNet conv5 setting. As the data bit-length varies, the optimal arithmetic mode can be chosen based on the charts. Possibilities exist where the cost is close for two arithmetic configuration, the better choice lies in the trade-off between saving off-chip DRAM power consumption which is often 3-orders higher than a basic operation and saving processing cycle on a averagely 600mW system.
-\begin{figure}[h]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=1\linewidth]{inc/5_results/figure/bit_conf.png}
     \caption{Various data bit-length to arithmetic bit-length off-chip access and processing time scaling.}

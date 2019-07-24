@@ -119,7 +119,7 @@ We propose a simple algorithm for quantization threshold choosing. \textit{Batch
 \end{algorithm}
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{inc/3_low_numeric_convolution_neural_network/figure/nor_dist.png}
+    \includegraphics[width=1\linewidth]{inc/3_low_numeric_convolution_neural_network/figure/nor_dist.png}
     \caption{Given a threshold, calculate the error between reconstructed distribution and the original.}
     \label{fig:th_choice}
 \end{figure}
@@ -145,13 +145,13 @@ We first determine a desirable MAC bit-length configuration \textbf{$A_b$}, usua
 Having the data prepared through quantization and re-packing, we are ready to move on to the accelerator architecture designed for such data.
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{inc/3_low_numeric_convolution_neural_network/figure/re_pack1.png}
+    \includegraphics[width=1\linewidth]{inc/3_low_numeric_convolution_neural_network/figure/re_pack1.png}
     \caption{4-bit data repacked to 16-bit compact data.}
     \label{fig:re_pack1}
 \end{figure}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\linewidth]{inc/3_low_numeric_convolution_neural_network/figure/re_pack2.png}
+    \includegraphics[width=1\linewidth]{inc/3_low_numeric_convolution_neural_network/figure/re_pack2.png}
     \caption{8-bit data repacked to 16-bit compact data with additional bit channel data of size 2.}
     \label{fig:re_pack2}
 \end{figure}
