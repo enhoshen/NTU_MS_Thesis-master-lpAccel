@@ -8,7 +8,7 @@ However, such performance requires tens to hundreds of parameters, up to billion
 
 Besides processing speed, the enormous amount of operations and memory transactions introduce unbearable energy consumption for mobile devices. The energy cost per 32b operation in a 45nm
 technology ranges from 3pJ for multiplication to 640pJ for off-chip memory access \cite{EIE}. To run a billion
-connection neural network at 30 FPS would require 30Hz × 1G × 640pJ = 19.2W just
+connection neural network at 30 FPS would require 30Hz*1G*640pJ = 19.2W just
 for DRAM accesses, well beyond the several hundreds mini Watt to couple of Watt range of typical mobile battery-powered devices.
 
 To address the problem, we propose a re-configurable accelerator hardware, to efficiently run linearly-quantized CNN model, saving both computational and memory transaction power from the micro-architectural, system-level dataflow, algorithmic quantization strategy perspectives.

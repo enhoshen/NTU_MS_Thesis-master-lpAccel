@@ -75,11 +75,11 @@ The data is specially arranged in the following manners \autoref{tab:addr_map} i
         \toprule
         Row tensor & Row index tensor & bank & group \\
         \midrule
-            $\boldsymbol{I_r}[X_b][W'][P_{ch}]$ & $\boldsymbol{I_{idx}}[T_b][H']$  &$\boldsymbol{I_{idx}.flatten}\%16$ & $\boldsymbol{I_{row}.flatten}\%2$\\
-            $\boldsymbol{W_r}[S][R][P_m]$ & $\boldsymbol{W_{idx}}[\lfloor T_m/P_m \rfloor][W_b]$     
-            & $\boldsymbol{W_{idx}.flatten}\%16$ & $\boldsymbol{W_{row}.flatten}\%2$\\
-            $\boldsymbol{O_r}[T_w][P_m]$ & $\boldsymbol{O_{idx}}[\lfloor T_m/P_m \rfloor][T_b][T_h]$ 
-            & $\boldsymbol{O_{idx}.flatten}\%16$ & $\boldsymbol{O_{row}.flatten}\%2$\\
+            $\boldsymbol{I_r}[X_b][W'][P_{ch}]$ & $\boldsymbol{I_{idx}}[T_b][H']$  &$\boldsymbol{\lfloor I_{idx}.flatten/U\rfloor}\%16$ & $\boldsymbol{I_{row}.flatten}\%2$\\
+            $\boldsymbol{W_r}[S][R][P_m]$ & $\boldsymbol{W_{idx}}[\lceil T_m/P_m \rceil][W_b]$     
+            & $\boldsymbol{tmm}\%16$ & $\boldsymbol{W_{row}.flatten}\%2$\\
+            $\boldsymbol{O_r}[T_w][P_m]$ & $\boldsymbol{O_{idx}}[\lceil T_m/P_m \rceil][T_b][T_h]$ 
+            & $\boldsymbol{tmm}\%16$ & $\boldsymbol{O_{row}.flatten}\%2$\\
 
         \bottomrule
         \multicolumn{4}{c}{$H'=(T_h*U)-U+R\quad W'=(T_w*U)-U+R$} 
