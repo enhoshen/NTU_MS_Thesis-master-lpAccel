@@ -14,7 +14,7 @@ Power consumption is usually the bigger concern before performance when it comes
 
 
 
-\subsection{Dataflow}
+\subsection{Output row stationary dataflow}
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{inc/4_proposed_architecture/figure/dataflow.png}
@@ -76,7 +76,7 @@ The data is specially arranged in the following manners \autoref{tab:addr_map} i
         Row tensor & Row index tensor & bank & group \\
         \midrule
             $\boldsymbol{I_r}[X_b][W'][P_{ch}]$ & $\boldsymbol{I_{idx}}[T_b][H']$  &$\boldsymbol{\lfloor I_{idx}.flatten/U\rfloor}\%16$ & $\boldsymbol{I_{row}.flatten}\%2$\\
-            $\boldsymbol{W_r}[S][R][P_m]$ & $\boldsymbol{W_{idx}}[\lceil T_m/P_m \rceil][W_b]$     
+            $\boldsymbol{W_r}[S][R][P_m][P_{ch}]$ & $\boldsymbol{W_{idx}}[\lceil T_m/P_m \rceil][W_b]$     
             & $\boldsymbol{tmm}\%16$ & $\boldsymbol{W_{row}.flatten}\%2$\\
             $\boldsymbol{O_r}[T_w][P_m]$ & $\boldsymbol{O_{idx}}[\lceil T_m/P_m \rceil][T_b][T_h]$ 
             & $\boldsymbol{tmm}\%16$ & $\boldsymbol{O_{row}.flatten}\%2$\\
@@ -186,8 +186,8 @@ To be able to quantize and re-pack output data as soon as the partial sum is fin
 \end{table}
 
 
-\subsection{Re-configurable arithmetic logic unit}
-First we review the low-precision operation details. The input and weight data is re-packed along channel dimension based on arithmetic bit length $A_b$ into a data of 16-bit word. The channel dimension in CNN is meant to be accumulated together. \autoref{fig:mult_add} shows a 4x 4-bit multiplication and addition is needed for such data. Similarly, we need 16x MAC for 1-bit data, 8x for 2-bit, 2x for 8-bit. We call such basic operator \textbf{MAT} as in \textit{multiplier adder tree}, as it performs $16/A_b$ multiplications and sums them up. The multiplication needs to support either signed or unsigned mode. We also include \textit{XNOR} mode feature binarized layer as in \cite{XnorNet}, where each binary data 1 mapped to 1, 0 to -1. \\
+\subsection{Sub-word accumulation operation and re-configurable arithmetic logic unit}
+First we review the low-precision operation details. The input and weight data is re-packed along channel dimension based on arithmetic bit length $A_b$ into a data of 16-bit word. The channel dimension in CNN is meant to be accumulated together. \autoref{fig:mult_add} shows a 4x 4-bit multiplication and addition is needed for such data. Similarly, we need 16x MAC for 1-bit data, 8x for 2-bit, 2x for 8-bit. We call such basic operator \textbf{MAT} as in \textit{multiplier adder tree}, and the operation as \textbf{sub-word accumulation}, as it performs $16/A_b$ multiplications and sums them up. The multiplication needs to support either signed or unsigned mode. We also include \textit{XNOR} mode feature binarized layer as in \cite{XnorNet}, where each binary data 1 mapped to 1, 0 to -1. \\
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{inc/4_proposed_architecture/figure/mult_add.png}
@@ -259,7 +259,7 @@ Synthesis results concludes for using MUX MAT design. For the time being, we foc
 Shift dispatcher between buffers and PE array are just a circular shift-register. As the input is re-arranged based on stride $U$ either off-line (first layer) or naturally aligned by the processing of the system at the output, every PE columns can access required data from each input banks at the same cycle. The registers are gated if corresponding PE column is inactive. \autoref{fig:shift_dispatcher} demonstrate a $U=1,S=3,ss=3$ and a $U=4,S=11,ss=9$ example where left shift 2 is needed for both.  
 
 \subsection{Quantization}
-We use round to the nearest quantization scheme. After the final scaling and shifting, we save two digit behind the decimal point, in other word we right shift $\gamma'=gamma-2$ 2 less digit than the real shifting factor. Now for positive number, the result add 1 if the first digit behind decimal point is 1, otherwise get rid all the decimals. For negative number, the result add 1 if the two digits behind decimal point is $11$, otherwise get rid of all the decimals. For example a positive number $01000.1_b$ is rounded to $01001$, that is 8.5 rounded to 9; a negative number $10111.11_b$ is rounded to $11000$, that is -8.25 rounded to -8. 
+We use round to the nearest quantization scheme. After the final scaling and shifting, we save two digit behind the decimal point, in other word we right shift $\gamma'=gamma-2$, 2 less digit than the real shifting factor. Now for positive number, the result add 1 if the first digit behind decimal point is 1, otherwise get rid all the decimals. For negative number, the result add 1 if the two digits behind decimal point is $11$, otherwise get rid of all the decimals. For example a positive number $01000.1_b$ is rounded to $01001$, that is 8.5 rounded to 9; a negative number $10111.11_b$ is rounded to $11000$, that is -8.25 rounded to -8. 
 
 \iffalse
 \TODO{final choice}.

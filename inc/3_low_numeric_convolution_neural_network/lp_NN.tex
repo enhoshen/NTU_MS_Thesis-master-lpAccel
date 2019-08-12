@@ -69,7 +69,7 @@ Low numeric precision data in this work is applied to each type of tensors. Give
 Where \textit{round}() round the number to the nearest integer. The convolution on the original tensor can therefore take the following form \autoref{eq:quant_conv}:
 \begin{equation}
     \begin{aligned}\label{eq:quant_conv}
-        \boldsymbol{O}\approx\boldsymbol{I}\star\boldsymbol{W}= \boldsymbol{I_q}\star\boldsymbol{W_q}
+        \boldsymbol{O}=\boldsymbol{I}\star\boldsymbol{W} \approx\boldsymbol{I_q}\star\boldsymbol{W_q}
         \ \frac{\boldsymbol{\tau_I}}{2^{k_I-1}}
         \ \frac{\boldsymbol{\tau_W}}{2^{k_W-1}}
         =\boldsymbol{O_q}\  \frac{\boldsymbol{\tau_O}}{2^{k_O-1}} \\
@@ -80,7 +80,7 @@ Where \textit{round}() round the number to the nearest integer. The convolution 
     \begin{aligned}\label{eq:scalar_approx}
         \boldsymbol{\delta}=\textit{ round} ( log_2\alpha)\quad
         \boldsymbol{\gamma}=\textit{ round}( \frac{\alpha}{2^{\delta}})\quad
-        \boldsymbol{\alpha}\approx=\delta\gg\gamma
+        \boldsymbol{\alpha}\approx\gamma\gg\delta
     \end{aligned}    
 \end{equation}
 We see the part $\boldsymbol{I_q}\star\boldsymbol{W_q}$ is the low precision convolution fit for specially designed processor. $\boldsymbol{\alpha}$ merges the rest of the equation to a scaling factor, which in practice can be approximated together with other scaling factor with a 16-bit fixed-point multiplier $\boldsymbol{\delta}$ and a shifting factor $\boldsymbol{\gamma}$, see \autoref{eq:scalar_approx}. \\
